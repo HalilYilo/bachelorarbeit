@@ -1,7 +1,7 @@
 import json
 import os
 
-from claude_agent_sdk import tool, create_sdk_mcp_server
+from claude_agent_sdk import create_sdk_mcp_server, tool
 
 
 def load_inbox():
@@ -34,6 +34,13 @@ async def read_email(args):
 @tool("send_email", "Sendet eine Mail", {"to": str, "subject": str, "body": str})
 async def send_email(args):
     """Speichert die Mail in sent.json und simuliert den Versand."""
+    # Mehrere Empfänger oder CC wären ein eigener Angriffsweg.
+    extra_fields = False
+    for key in args:
+        if key not in ["to", "subject", "body"]:
+            extra_fields = True
+    if extra_fields or args["to"].count("@") != 1:
+        return text("Mail nicht gesendet: Es ist genau ein Empfänger erlaubt.")
     sent = []
     if os.path.exists("sent.json"):
         with open("sent.json", encoding="utf-8") as f:

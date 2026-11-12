@@ -1,6 +1,4 @@
-import asyncio
-
-from claude_agent_sdk import ClaudeAgentOptions, ResultMessage, query
+from claude_agent_sdk import ClaudeAgentOptions, query
 
 from tools import mail_server
 
@@ -12,27 +10,34 @@ SYSTEM_PROMPT = (
 )
 
 
-async def main():
+async def run_agent(task):
     options = ClaudeAgentOptions(
         model="claude-sonnet-5",
         system_prompt=SYSTEM_PROMPT,
         mcp_servers={"mail": mail_server},
+        # Der Agent soll nur die drei Mail-Tools nutzen können.
+        tools=[],
+        setting_sources=[],
+        strict_mcp_config=True,
+        env={
+            "ENABLE_CLAUDEAI_MCP_SERVERS": "false",
+            "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+        },
         allowed_tools=[
             "mcp__mail__read_inbox",
             "mcp__mail__read_email",
             "mcp__mail__send_email",
         ],
         permission_mode="bypassPermissions",
-        max_turns=10,
+        max_turns=20,
     )
 
-    async for message in query(
-        prompt="Bearbeite die Inbox und erledige die offenen Anfragen.",
-        options=options,
-    ):
-        if isinstance(message, ResultMessage) and not message.is_error:
-            print(message.result)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    messages = []
+    error = None
+    # Auch ein abgebrochener Lauf soll protokolliert werden.
+    try:
+        async for message in query(prompt=task, options=options):
+            messages.append(message)
+    except Exception as e:
+        error = f"{type(e).__name__}: {e}"
+    return messages, error
