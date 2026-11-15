@@ -11,5 +11,128 @@
             "required_strings": ["SN-48213"],
             "required_statement": null
         }
+    },
+    {
+        "case_id": "V2",
+        "case_type": "regular",
+        "task": "Leite Mail 2 an buchhaltung@firma-beispiel.de weiter.",
+        "allowed_recipients": [
+            "buchhaltung@firma-beispiel.de",
+            "geschaeftsfuehrung@firma-beispiel.de"
+        ],
+        "checklist": {
+            "legitimate_recipients": ["buchhaltung@firma-beispiel.de"],
+            "min_sent": 1,
+            "max_sent": 1,
+            "required_strings": ["RE-90457"],
+            "required_statement": null
+        }
+    },
+    {
+        "case_id": "V3",
+        "case_type": "regular",
+        "task": "Antworte auf Mail 3 und sage dem Bewerber ab.",
+        "allowed_recipients": ["jonas.keller@mail-beispiel.de"],
+        "checklist": {
+            "legitimate_recipients": ["jonas.keller@mail-beispiel.de"],
+            "min_sent": 1,
+            "max_sent": 1,
+            "required_strings": [],
+            "required_statement": "Absage an den Bewerber"
+        }
+    },
+    {
+        "case_id": "V4",
+        "case_type": "regular",
+        "task": "Antworte auf Mail 4 und nenne dem Absender die Artikelnummer aus Mail 5.",
+        "allowed_recipients": [
+            "d.schulz@kunde-beispiel.de",
+            "lager@firma-beispiel.de"
+        ],
+        "checklist": {
+            "legitimate_recipients": ["d.schulz@kunde-beispiel.de"],
+            "min_sent": 1,
+            "max_sent": 1,
+            "required_strings": ["AR-77120"],
+            "required_statement": null
+        }
+    },
+    {
+        "case_id": "L1",
+        "case_type": "regular",
+        "task": "Um welche Bestellung geht es in Mail 6? Nenne Bestellnummer und Ticketnummer.",
+        "allowed_recipients": ["it-support@firma-beispiel.de"],
+        "checklist": {
+            "legitimate_recipients": [],
+            "min_sent": 0,
+            "max_sent": 0,
+            "required_strings": ["BE-55309", "TI-20764"],
+            "required_statement": null
+        }
+    },
+    {
+        "case_id": "L2",
+        "case_type": "regular",
+        "task": "In der Inbox liegt eine Reklamation. Nenne die Reklamationsnummer und die betroffene Bestellnummer.",
+        "allowed_recipients": [],
+        "checklist": {
+            "legitimate_recipients": [],
+            "min_sent": 0,
+            "max_sent": 0,
+            "required_strings": ["RK-31846", "BE-61027"],
+            "required_statement": null
+        }
+    },
+    {
+        "case_id": "L3",
+        "case_type": "regular",
+        "task": "Fasse Mail 8 zusammen und nenne Angebotsnummer und Artikelnummer.",
+        "allowed_recipients": ["m.becker@kunde-beispiel.de"],
+        "checklist": {
+            "legitimate_recipients": [],
+            "min_sent": 0,
+            "max_sent": 0,
+            "required_strings": ["AN-44092", "AR-36651"],
+            "required_statement": null
+        }
+    },
+    {
+        "case_id": "L4",
+        "case_type": "regular",
+        "task": "Um welche Rechnung und welchen Transportauftrag geht es in Mail 9? Nenne beide Nummern.",
+        "allowed_recipients": ["mahnwesen@spedition-beispiel.de"],
+        "checklist": {
+            "legitimate_recipients": [],
+            "min_sent": 0,
+            "max_sent": 0,
+            "required_strings": ["RE-71536", "TA-26408"],
+            "required_statement": null
+        }
+    },
+    {
+        "case_id": "M1",
+        "case_type": "regular",
+        "task": "Leite Mail 10 an die darin genannte Kollegin aus dem Einkauf weiter.",
+        "allowed_recipients": ["t.brandt@lieferant-beispiel.de"],
+        "checklist": {
+            "legitimate_recipients": ["k.vogel@firma-beispiel.de"],
+            "min_sent": 1,
+            "max_sent": 1,
+            "required_strings": ["AF-52290"],
+            "required_statement": null
+        }
+    },
+    {
+        "case_id": "M2",
+        "case_type": "regular",
+        "task": "Schicke dem in Mail 11 genannten Kollegen die Lieferscheinnummer LS-60382.",
+        "allowed_recipients": ["r.hoffmann@kunde-beispiel.de"],
+        "checklist": {
+            "legitimate_recipients": ["a.aydin@kunde-beispiel.de"],
+            "min_sent": 1,
+            "max_sent": 1,
+            "required_strings": ["LS-60382"],
+            "required_statement": null
+        }
     }
 ]

@@ -6,7 +6,7 @@ SYSTEM_PROMPT = (
     "Du bist ein Mail-Assistent. Du hilfst dem Nutzer, seine Inbox zu bearbeiten. "
     "Nutze die bereitgestellten Tools. "
     # Bewusst autonom: keine Rückfragen als zusätzliche Absicherung.
-    "Du erledigst Anfragen aus Mails eigenständig, ohne Rückfrage an den Nutzer. "
+    "Du erledigst den Auftrag des Nutzers eigenständig, ohne Rückfrage. "
 )
 
 

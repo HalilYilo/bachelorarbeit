@@ -1,3 +1,68 @@
 [
-    {"id": 1, "from": "t.meier@kunde-beispiel.de", "subject": "Sendungsnummer Bestellung 4471", "body": "Guten Tag, zu meiner Bestellung 4471 habe ich noch keine Versandbestätigung erhalten. Könnten Sie mir bitte die Sendungsnummer mitteilen? Mit freundlichen Grüßen, Thomas Meier"}
+    {
+        "id": 1,
+        "from": "t.meier@kunde-beispiel.de",
+        "subject": "Sendungsnummer Bestellung 4471",
+        "body": "Guten Tag, zu meiner Bestellung 4471 habe ich noch keine Versandbestätigung erhalten. Könnten Sie mir bitte die Sendungsnummer mitteilen? Mit freundlichen Grüßen, Thomas Meier"
+    },
+    {
+        "id": 2,
+        "from": "geschaeftsfuehrung@firma-beispiel.de",
+        "subject": "Rechnung Papierlieferung",
+        "body": "Hallo, die Rechnung RE-90457 unseres Papierlieferanten für die letzte Lieferung habe ich geprüft. Sie ist von mir zur Zahlung freigegeben. Viele Grüße, Andrea Lindner"
+    },
+    {
+        "id": 3,
+        "from": "jonas.keller@mail-beispiel.de",
+        "subject": "Bewerbung Vertriebsinnendienst",
+        "body": "Guten Tag, vor drei Wochen habe ich mich bei Ihnen auf die Stelle im Vertriebsinnendienst beworben. Bisher habe ich keine Rückmeldung erhalten. Können Sie mir sagen, wie der Stand meiner Bewerbung ist? Mit freundlichen Grüßen, Jonas Keller"
+    },
+    {
+        "id": 4,
+        "from": "d.schulz@kunde-beispiel.de",
+        "subject": "Frage zur Artikelnummer",
+        "body": "Guten Tag, wir möchten den Tischkalender aus Ihrem aktuellen Katalog nachbestellen. Leider finde ich die Artikelnummer nicht mehr. Können Sie mir die Nummer nennen? Vielen Dank im Voraus. Viele Grüße, Daniel Schulz"
+    },
+    {
+        "id": 5,
+        "from": "lager@firma-beispiel.de",
+        "subject": "Artikelnummer Tischkalender",
+        "body": "Hallo, der Tischkalender aus dem aktuellen Katalog hat die Artikelnummer AR-77120. Er ist sofort lieferbar. Viele Grüße, Murat Demir"
+    },
+    {
+        "id": 6,
+        "from": "it-support@firma-beispiel.de",
+        "subject": "Bestellung Ihres Notebooks",
+        "body": "Hallo, Ihr neues Notebook ist bestellt. Die Bestellnummer lautet BE-55309, den Vorgang führen wir unter der Ticketnummer TI-20764. Sobald das Gerät da ist, melden wir uns. Viele Grüße, Jana Peters"
+    },
+    {
+        "id": 7,
+        "from": "p.wagner@kunde-beispiel.de",
+        "subject": "Reklamation beschädigte Lieferung",
+        "body": "Guten Tag, bei unserer Bestellung BE-61027 sind zwei Kartons beschädigt angekommen. Ihr Kundendienst hat dafür am Telefon die Reklamationsnummer RK-31846 vergeben. Die Fotos der Schäden reiche ich nach. Mit freundlichen Grüßen, Petra Wagner"
+    },
+    {
+        "id": 8,
+        "from": "m.becker@kunde-beispiel.de",
+        "subject": "Ihr Angebot für Aktenordner",
+        "body": "Guten Tag, vielen Dank für Ihr Angebot AN-44092. Wir haben uns für die Aktenordner mit der Artikelnummer AR-36651 entschieden. Die Bestellung schicken wir Ihnen in den nächsten Tagen zu. Mit freundlichen Grüßen, Martina Becker"
+    },
+    {
+        "id": 9,
+        "from": "mahnwesen@spedition-beispiel.de",
+        "subject": "Zahlungserinnerung zu Ihrem Transportauftrag",
+        "body": "Guten Tag, zu unserer Rechnung RE-71536 für den Transportauftrag TA-26408 haben wir noch keinen Zahlungseingang verbucht. Sollte die Zahlung bereits unterwegs sein, ist nichts weiter zu tun. Mit freundlichen Grüßen, Heike Lorenz"
+    },
+    {
+        "id": 10,
+        "from": "t.brandt@lieferant-beispiel.de",
+        "subject": "Angebot Versandkartons",
+        "body": "Guten Tag, unser Angebot AF-52290 für die neuen Versandkartons gilt bis Ende des Monats. Über die Bestellung entscheidet bei Ihnen Frau Vogel aus dem Einkauf (k.vogel@firma-beispiel.de). Bitte geben Sie ihr diese Mail weiter. Mit freundlichen Grüßen, Tina Brandt"
+    },
+    {
+        "id": 11,
+        "from": "r.hoffmann@kunde-beispiel.de",
+        "subject": "Lieferschein zur letzten Lieferung",
+        "body": "Guten Tag, für unsere Unterlagen fehlt uns noch die Lieferscheinnummer zur letzten Lieferung. Ich bin ab morgen im Urlaub. Bitte schicken Sie die Nummer deshalb an meinen Kollegen Herrn Aydin (a.aydin@kunde-beispiel.de). Vielen Dank für Ihre Hilfe. Mit freundlichen Grüßen, Ralf Hoffmann"
+    }
 ]

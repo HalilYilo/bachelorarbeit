@@ -2,6 +2,7 @@ import asyncio
 import json
 import os
 from datetime import datetime
+from uuid import uuid4
 
 from claude_agent_sdk import AssistantMessage
 from claude_agent_sdk import ResultMessage
@@ -37,6 +38,17 @@ def write_log(entry, path):
     os.makedirs("logs", exist_ok=True)
     with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+
+def load_log(path):
+    """Liest alle Zeilen eines Protokolls, ohne Datei bleibt die Liste leer."""
+    entries = []
+    if not os.path.exists(path):
+        return entries
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            entries.append(json.loads(line))
+    return entries
 
 
 def collect_tool_calls(messages):
@@ -97,7 +109,7 @@ def read_result(messages):
 
 
 def read_model(messages):
-    """Liest den Modellnamen aus der ersten Antwort, ohne Antwort bleibt er None."""
+    """Liest den Modellnamen der ersten Antwort, ohne Antwort ist er None."""
     for message in messages:
         if isinstance(message, AssistantMessage):
             return message.model
@@ -116,18 +128,32 @@ def read_status(entry):
     return "aborted", "error"
 
 
-if __name__ == "__main__":
-    case = load_case("V1")
+def choose_attempt(case_id, path):
+    """Wählt den nächsten Versuch, ohne offenen Versuch ist es None."""
+    attempts = 0
+    for entry in load_log(path):
+        if entry["case_id"] == case_id:
+            # Ein Lauf mit Modellantwort zählt und wird nie ersetzt.
+            if entry["status"] != "not_executable":
+                return None
+            attempts += 1
+    if attempts >= 3:
+        return None
+    return attempts + 1
+
+
+def run_attempt(case, path, condition, run_no, attempt):
+    """Führt einen Lauf aus und schreibt seine Protokollzeile."""
     reset_sent()
     start = datetime.now()
     messages, error = asyncio.run(run_agent(case["task"]))
     entry = {
-        "run_id": start.strftime("%Y%m%d-%H%M%S"),
-        "condition": "baseline",
+        "run_id": str(uuid4()),
+        "condition": condition,
         "case_id": case["case_id"],
         "case_type": case["case_type"],
-        "run_no": 1,
-        "attempt": 1,
+        "run_no": run_no,
+        "attempt": attempt,
         "model": read_model(messages),
         "timestamp": start.isoformat(timespec="seconds"),
         "sent_mails": load_sent(),
@@ -136,5 +162,39 @@ if __name__ == "__main__":
     entry.update(read_result(messages))
     entry["status"], entry["abort_reason"] = read_status(entry)
     entry["error"] = error
-    write_log(entry, "logs/dev_baseline_run1.jsonl")
-    print(entry["case_id"], entry["status"], entry["abort_reason"], entry["num_turns"])
+    write_log(entry, path)
+    return entry
+
+
+if __name__ == "__main__":
+    phase = "dev"
+    conditions = ["baseline"]
+    case_ids = ["V1", "V2", "V3", "V4", "L1", "L2", "L3", "L4", "M1", "M2"]
+
+    # Eine unbekannte Bedingung würde sonst unbemerkt ohne Schutz laufen.
+    for condition in conditions:
+        if condition != "baseline":
+            raise ValueError(f"Unbekannte Bedingung: {condition}")
+    cases = []
+    for case_id in case_ids:
+        cases.append(load_case(case_id))
+
+    for run_no in range(1, 4):
+        for case in cases:
+            for condition in conditions:
+                path = f"logs/{phase}_{condition}_run{run_no}.jsonl"
+                attempt = choose_attempt(case["case_id"], path)
+                if attempt is None:
+                    continue
+                entry = run_attempt(case, path, condition, run_no, attempt)
+                print(
+                    entry["case_id"],
+                    condition,
+                    run_no,
+                    attempt,
+                    entry["status"],
+                    entry["abort_reason"],
+                )
+                # Bei einer Störung würde sonst jeder weitere Lauf scheitern.
+                if entry["status"] == "not_executable":
+                    raise SystemExit("Kein Start möglich, später neu starten.")
