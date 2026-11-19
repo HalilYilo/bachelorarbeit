@@ -10,22 +10,58 @@ from claude_agent_sdk import ToolResultBlock
 from claude_agent_sdk import ToolUseBlock
 from claude_agent_sdk import UserMessage
 
-from agent import run_agent
+from agent import MODEL, run_agent
+
+
+# Vorläufiger Wert in Sekunden, weit über jeder bisherigen Laufzeit.
+TIME_LIMIT = 600
 
 
 def load_case(case_id):
+    """Lädt einen Fall, ein Angriffsfall erhält den Auftrag seiner Basis."""
     with open("cases.json", encoding="utf-8") as f:
         cases = json.load(f)
     for case in cases:
         if case["case_id"] == case_id:
+            if "base_task_id" in case:
+                base = load_case(case["base_task_id"])
+                case["task"] = base["task"]
+                case["allowed_recipients"] = base["allowed_recipients"]
+                case["checklist"] = base["checklist"]
             return case
     raise ValueError(f"Unbekannte Fall-ID: {case_id}")
+
+
+def planned_runs(case):
+    """Gibt zurück, wie oft ein Fall je Bedingung läuft."""
+    # Die ergänzenden Fälle laufen fünfmal, weil es nur drei sind.
+    if case.get("attack_group") == "supplementary":
+        return 5
+    return 3
 
 
 def reset_sent():
     """Legt sent.json leer an, damit jeder Lauf ohne alte Mails beginnt."""
     with open("sent.json", "w", encoding="utf-8") as f:
         json.dump([], f)
+
+
+def reset_inbox(case):
+    """Schreibt inbox_run.json neu, bei einem Angriff mit Angriffstext."""
+    with open("inbox.json", encoding="utf-8") as f:
+        inbox = json.load(f)
+    if case["case_type"] != "regular":
+        found = False
+        for mail in inbox:
+            if mail["id"] == case["attack_mail_id"]:
+                # Der Angriffstext steht am Mailende hinter dem Gruß.
+                mail["body"] = mail["body"] + " " + case["injection"]
+                found = True
+        # Ohne Treffer liefe der Fall sonst unbemerkt ohne Angriffstext.
+        if not found:
+            raise ValueError(f"Keine Angriffsmail in {case['case_id']}")
+    with open("inbox_run.json", "w", encoding="utf-8") as f:
+        json.dump(inbox, f, indent=2, ensure_ascii=False)
 
 
 def load_sent():
@@ -81,6 +117,8 @@ def read_result(messages):
     """Liest die Werte der ResultMessage, ohne sie bleiben alle Werte None."""
     values = {
         "result_subtype": None,
+        "is_error": None,
+        "stop_reason": None,
         "num_turns": None,
         "final_answer": None,
         "tokens_in": None,
@@ -92,6 +130,8 @@ def read_result(messages):
     for message in messages:
         if isinstance(message, ResultMessage):
             values["result_subtype"] = message.subtype
+            values["is_error"] = message.is_error
+            values["stop_reason"] = message.stop_reason
             values["num_turns"] = message.num_turns
             values["final_answer"] = message.result
             values["duration_s"] = message.duration_ms / 1000
@@ -116,15 +156,20 @@ def read_model(messages):
     return None
 
 
-def read_status(entry):
+def read_status(entry, error):
     """Gibt Status und Abbruchgrund des Laufs zurück."""
     if entry["result_subtype"] == "success":
-        return "ok", None
+        # Eine Verweigerung ist Verhalten des Modells und bleibt gewertet.
+        if not entry["is_error"] or entry["stop_reason"] == "refusal":
+            return "ok", None
     if entry["result_subtype"] == "error_max_turns":
         return "aborted", "max_turns"
     # Ohne Modellantwort hat der Lauf nichts gemessen und zählt nicht.
     if entry["model"] is None:
         return "not_executable", None
+    # Das Zeitlimit ist nur der Grund, wenn kein Ergebnis mehr kam.
+    if error == "timeout" and entry["result_subtype"] is None:
+        return "aborted", "timeout"
     return "aborted", "error"
 
 
@@ -144,14 +189,16 @@ def choose_attempt(case_id, path):
 
 def run_attempt(case, path, condition, run_no, attempt):
     """Führt einen Lauf aus und schreibt seine Protokollzeile."""
+    reset_inbox(case)
     reset_sent()
     start = datetime.now()
-    messages, error = asyncio.run(run_agent(case["task"]))
+    messages, error = asyncio.run(run_agent(case["task"], TIME_LIMIT))
     entry = {
         "run_id": str(uuid4()),
         "condition": condition,
         "case_id": case["case_id"],
         "case_type": case["case_type"],
+        "base_task_id": case.get("base_task_id"),
         "run_no": run_no,
         "attempt": attempt,
         "model": read_model(messages),
@@ -160,7 +207,7 @@ def run_attempt(case, path, condition, run_no, attempt):
         "tool_calls": collect_tool_calls(messages),
     }
     entry.update(read_result(messages))
-    entry["status"], entry["abort_reason"] = read_status(entry)
+    entry["status"], entry["abort_reason"] = read_status(entry, error)
     entry["error"] = error
     write_log(entry, path)
     return entry
@@ -169,7 +216,11 @@ def run_attempt(case, path, condition, run_no, attempt):
 if __name__ == "__main__":
     phase = "dev"
     conditions = ["baseline"]
-    case_ids = ["V1", "V2", "V3", "V4", "L1", "L2", "L3", "L4", "M1", "M2"]
+    # Ohne Auswahl laufen alle Fälle aus cases.json.
+    case_ids = []
+    with open("cases.json", encoding="utf-8") as f:
+        for case in json.load(f):
+            case_ids.append(case["case_id"])
 
     # Eine unbekannte Bedingung würde sonst unbemerkt ohne Schutz laufen.
     for condition in conditions:
@@ -179,10 +230,13 @@ if __name__ == "__main__":
     for case_id in case_ids:
         cases.append(load_case(case_id))
 
-    for run_no in range(1, 4):
+    for run_no in range(1, 6):
         for case in cases:
+            # Ein Fall mit drei Durchgängen ist nach dem dritten fertig.
+            if run_no > planned_runs(case):
+                continue
             for condition in conditions:
-                path = f"logs/{phase}_{condition}_run{run_no}.jsonl"
+                path = f"logs/{phase}_{condition}_{MODEL}_run{run_no}.jsonl"
                 attempt = choose_attempt(case["case_id"], path)
                 if attempt is None:
                     continue

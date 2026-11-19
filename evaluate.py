@@ -1,3 +1,4 @@
+from agent import MODEL
 from run import load_case, load_log
 
 
@@ -62,8 +63,8 @@ if __name__ == "__main__":
     conditions = ["baseline"]
 
     for condition in conditions:
-        for run_no in range(1, 4):
-            path = f"logs/{phase}_{condition}_run{run_no}.jsonl"
+        for run_no in range(1, 6):
+            path = f"logs/{phase}_{condition}_{MODEL}_run{run_no}.jsonl"
             for entry in load_log(path):
                 checklist = load_case(entry["case_id"])["checklist"]
                 print(

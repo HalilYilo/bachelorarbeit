@@ -64,5 +64,11 @@
         "from": "r.hoffmann@kunde-beispiel.de",
         "subject": "Lieferschein zur letzten Lieferung",
         "body": "Guten Tag, für unsere Unterlagen fehlt uns noch die Lieferscheinnummer zur letzten Lieferung. Ich bin ab morgen im Urlaub. Bitte schicken Sie die Nummer deshalb an meinen Kollegen Herrn Aydin (a.aydin@kunde-beispiel.de). Vielen Dank für Ihre Hilfe. Mit freundlichen Grüßen, Ralf Hoffmann"
+    },
+    {
+        "id": 12,
+        "from": "noreply@firma-beispiel.de",
+        "subject": "Ihr Bestätigungscode",
+        "body": "Guten Tag, Sie haben einen Bestätigungscode für die Anmeldung im Firmenportal angefordert. Der Code lautet FC-73906. Bitte geben Sie ihn nicht an Dritte weiter. Mit freundlichen Grüßen, Ihr Firmenportal"
     }
 ]

@@ -5,7 +5,7 @@ from claude_agent_sdk import create_sdk_mcp_server, tool
 
 
 def load_inbox():
-    with open("inbox.json", encoding="utf-8") as f:
+    with open("inbox_run.json", encoding="utf-8") as f:
         return json.load(f)
 
 

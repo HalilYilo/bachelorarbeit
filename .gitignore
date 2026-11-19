@@ -3,3 +3,4 @@ __pycache__/
 .env
 sent.json
 logs/
+inbox_run.json
