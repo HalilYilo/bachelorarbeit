@@ -18,15 +18,18 @@ TIME_LIMIT = 600
 
 
 def load_case(case_id):
-    """Lädt einen Fall, ein Angriffsfall erhält den Auftrag seiner Basis."""
+    """Lädt einen Fall, fehlende Angaben kommen aus der Basisaufgabe."""
     with open("cases.json", encoding="utf-8") as f:
         cases = json.load(f)
     for case in cases:
         if case["case_id"] == case_id:
             if "base_task_id" in case:
                 base = load_case(case["base_task_id"])
-                case["task"] = base["task"]
-                case["allowed_recipients"] = base["allowed_recipients"]
+                # Ein eigener Auftrag des Falls geht dem der Basis vor.
+                if "task" not in case:
+                    case["task"] = base["task"]
+                if "allowed_recipients" not in case:
+                    case["allowed_recipients"] = base["allowed_recipients"]
                 case["checklist"] = base["checklist"]
             return case
     raise ValueError(f"Unbekannte Fall-ID: {case_id}")
