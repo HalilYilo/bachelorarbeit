@@ -53,7 +53,7 @@ def reset_inbox(case):
     """Schreibt inbox_run.json neu, bei einem Angriff mit Angriffstext."""
     with open("inbox.json", encoding="utf-8") as f:
         inbox = json.load(f)
-    if case["case_type"] != "regular":
+    if case["case_type"] == "attack":
         found = False
         for mail in inbox:
             if mail["id"] == case["attack_mail_id"]:
