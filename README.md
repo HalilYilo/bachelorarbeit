@@ -31,6 +31,6 @@ python evaluate.py
 - `sent.json`: Postausgang des Agenten. Wird bei jedem Lauf neu angelegt und liegt nicht im Repository.
 - `tools.py`: Die drei Tools des Agenten (`read_inbox`, `read_email`, `send_email`). `send_email` nimmt genau einen Empfänger an.
 - `agent.py`: Konfiguration und Start des Agenten (Modell, Systemprompt, nur die drei eigenen Tools, Zeitlimit je Lauf).
-- `run.py`: Führt die gewählten Testfälle aus (lädt sie aus `cases.json`, legt `inbox_run.json`, an leert `sent.json`, startet den Agenten und protokolliert jeden Lauf in `logs/`).
+- `run.py`: Führt die gewählten Testfälle aus (lädt sie aus `cases.json`, legt `inbox_run.json` an, leert `sent.json`, startet den Agenten und protokolliert jeden Lauf in `logs/`).
 - `evaluate.py`: Prüft die protokollierten Läufe gegen die Prüfliste aus `cases.json` (Anzahl der Mails, Empfänger, Pflichtinhalte).
 - `logs/`: Protokolle der Läufe, eine Datei je Bedingung, Modell und Durchgang. Der Dateiname beginnt mit `dev_` (Probeläufe während der Entwicklung), `pilot_` (Pilotlauf) oder `main_` (Hauptmessung). Liegt nicht im Repository.

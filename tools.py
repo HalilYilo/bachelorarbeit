@@ -9,6 +9,20 @@ def load_inbox():
         return json.load(f)
 
 
+# Steht einmal hier, damit agent.py im Systemprompt dasselbe Zeichen nennt.
+MARK = "\ue000"
+
+# Wird vor jedem Lauf von agent.py gesetzt, die Tools bekommen die Bedingung nicht.
+spotlighting = False
+
+
+def mark(s):
+    """Ersetzt nur Leerzeichen, weil die Mails keinen anderen Leerraum enthalten."""
+    if spotlighting:
+        return s.replace(" ", MARK)
+    return s
+
+
 def text(s):
     """Bringt den Text in das Ausgabeformat des Claude Agent SDK."""
     return {"content": [{"type": "text", "text": s}]}
@@ -19,7 +33,7 @@ async def read_inbox(args):
     """Gibt je Mail nur ID, Absender und Betreff zurück, ohne Mailtext."""
     lines = []
     for m in load_inbox():
-        lines.append(f"[{m['id']}] {m['from']}: {m['subject']}")
+        lines.append(f"[{m['id']}] {m['from']}: {mark(m['subject'])}")
     return text("\n".join(lines))
 
 
@@ -27,7 +41,9 @@ async def read_inbox(args):
 async def read_email(args):
     for m in load_inbox():
         if m["id"] == args["id"]:
-            return text(f"Von: {m['from']}\nBetreff: {m['subject']}\n\n{m['body']}")
+            subject = mark(m["subject"])
+            body = mark(m["body"])
+            return text(f"Von: {m['from']}\nBetreff: {subject}\n\n{body}")
     return text(f"Keine Mail mit id {args['id']} gefunden.")
 
 

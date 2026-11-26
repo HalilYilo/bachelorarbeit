@@ -195,7 +195,7 @@ def run_attempt(case, path, condition, run_no, attempt):
     reset_inbox(case)
     reset_sent()
     start = datetime.now()
-    messages, error = asyncio.run(run_agent(case["task"], TIME_LIMIT))
+    messages, error = asyncio.run(run_agent(case["task"], condition, TIME_LIMIT))
     entry = {
         "run_id": str(uuid4()),
         "condition": condition,
@@ -227,7 +227,7 @@ if __name__ == "__main__":
 
     # Eine unbekannte Bedingung würde sonst unbemerkt ohne Schutz laufen.
     for condition in conditions:
-        if condition != "baseline":
+        if condition not in ["baseline", "spotlighting"]:
             raise ValueError(f"Unbekannte Bedingung: {condition}")
     cases = []
     for case_id in case_ids:
